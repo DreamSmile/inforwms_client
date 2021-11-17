@@ -1,0 +1,17 @@
+{
+    "name":"货品装箱",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"将丢失箱号的库位（如零拣位等）货品打包成整箱或混箱"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>自库位</span>"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>至库位</span>"},
+        {"isTitle":false,"msg":"3、扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"4、选择<span class='pink_bg'>箱型</span>，当箱型为整箱，后续扫描的货品sku需要一致"},
+        {"isTitle":false,"msg":"5、循环扫描<span class='pink_bg'>货品</span>，扫描历史将会展示的表格中"},
+        {"isTitle":false,"msg":"6、检查数据无误后点击<span class='green_bg'>提交</span>按钮"},
+        {"isTitle":false,"msg":"7、验证成功后，界面自动清空，重复1-7步骤"},
+        {"isTitle":false,"msg":"8、数据绑定错误情况，可点击<span class='green_bg'>清空货箱</span>按钮"}
+    ]
+}

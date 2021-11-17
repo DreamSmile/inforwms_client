@@ -1,0 +1,16 @@
+{
+    "name":"组车上架",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"上架员将货箱移动至上架工具上，依次扫描箱号，然后上架员根据系统推荐的货箱与库位进行上架作业"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、循环扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"2、箱号扫描结束后点击<span class='green_bg'>确认生成任务</span>按钮"},
+        {"isTitle":false,"msg":"3、页面跳入任务界面"},
+        {"isTitle":false,"msg":"4、根据页面上显示任务箱号于推荐库位，扫描验证<span class='pink_bg'>箱号</span>与<span class='pink_bg'>至库位</span>"},
+        {"isTitle":false,"msg":"5、<span class='pink_bg'>至库位</span>输入验证成功后，自动下一个任务"},
+        {"isTitle":false,"msg":"6、当<span class='pink_bg'>剩余任务</span>为零，界面提示任务完成，界面自动清空，回到生成任务界面，再次循环1-6步骤"},
+        {"isTitle":false,"msg":"7、可通过点击<span class='green_bg'>跳过</span>按钮，将当前任务放置到最后执行"}
+    ]
+}

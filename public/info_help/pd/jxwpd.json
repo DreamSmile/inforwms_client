@@ -1,0 +1,20 @@
+{
+    "name":"扫箱盘点",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"拣选库位对应的sku数量进行盘点"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>所在库位</span>，获得任务列表，页面自动显示盘点库位"},
+        {"isTitle":false,"msg":"2、输入对应<span class='pink_bg'>库位</span>的<span class='pink_bg'>货品</span>与<span class='pink_bg'>数量</span>"},
+        {"isTitle":false,"msg":"3、检查数据后点击<span class='green_bg'>确认箱数</span>按钮"},
+        {"isTitle":false,"msg":"4、箱号盘点成功后，自动开始下一任务，界面更新<span class='pink_bg'>库位</span>,重复1-4步骤"},
+        {"isTitle":false,"msg":"5、注意：如想退出本次盘点，请点击<span class='green_bg'>退出盘点</span>按钮，并选择原因，确认退出"},
+        {"isTitle":true,"msg":"增加库存"},
+        {"isTitle":false,"msg":"1、如果需要增加库存，请在检查<span class='pink_bg'>所在库位</span>后点击<span class='green_bg'>增加库存</span>按钮"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>货品</span>"},
+        {"isTitle":false,"msg":"3、输入<span class='pink_bg'>货品数量</span>"},
+        {"isTitle":false,"msg":"4、扫描<span class='pink_bg'>LPN</span>"},
+        {"isTitle":false,"msg":"3、检查数据后点击<span class='green_bg'>确定增加库存</span>按钮"}
+    ]
+}

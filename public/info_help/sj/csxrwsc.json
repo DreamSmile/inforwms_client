@@ -1,0 +1,13 @@
+{
+    "name":"传输线任务生成",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"自定义货箱或托盘出口，向WCS下达输送任务指令，将货箱或托盘的输送至指定出口"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、选择<span class='pink_bg'>任务类</span>"},
+        {"isTitle":false,"msg":"2、根据任务类别扫描<span class='pink_bg'>容器号</span>"},
+        {"isTitle":false,"msg":"3、扫描<span class='pink_bg'>出口</span>"},
+        {"isTitle":false,"msg":"4、成功后界面自动清空，重复1-4步骤"}
+    ]
+}

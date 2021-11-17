@@ -1,0 +1,12 @@
+{
+    "name":"零捡位传输线任务生成",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"通过向WCS下达箱传输线输送任务，由WCS根据任务指令控制线体将货箱输送至箱装主货品零拣位所属区设定的输送线下滑道口"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>箱号</span>，页面自动显示<span class='pink_bg'>出口</span>"},
+        {"isTitle":false,"msg":"2、页面数据核对后，点击<span class='green_bg'>确认下发传输线</span>"},
+        {"isTitle":false,"msg":"3、成功后界面自动清空，重复1-3步骤"}
+    ]
+}

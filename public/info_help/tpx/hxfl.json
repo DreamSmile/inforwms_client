@@ -1,0 +1,17 @@
+{
+    "name":"货箱分理",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"将现已装箱货品（包括整箱或混箱）重新打包装箱至新箱或与其它箱合并"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>自库位</span>"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>自箱号</span>"},
+        {"isTitle":false,"msg":"3、扫描<span class='pink_bg'>至库位</span>"},
+        {"isTitle":false,"msg":"4、扫描<span class='pink_bg'>至箱号</span>"},
+        {"isTitle":false,"msg":"5、选择<span class='pink_bg'>至箱型</span>，当选择整箱时，货品sku需要一致"},
+        {"isTitle":false,"msg":"6、多次循环扫描<span class='pink_bg'>货品</span>"},
+        {"isTitle":false,"msg":"7、确认数据后，点击<span class='green_bg'>提交</span>按钮"},
+        {"isTitle":false,"msg":"8、成功后，界面自动清空，重复1-8步骤"}
+    ]
+}

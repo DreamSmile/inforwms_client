@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title>托盘箱解绑</title>
+    <link rel="stylesheet" type="text/css" href="../assets/reset.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="tpxjb" class="all" v-cloak>
+        <h1 @click="showHelp =true">托盘箱解绑 [{{userName}}] <sup>?</sup></h1>
+        <div class="box">
+            <div class="row"><span class="problem">托盘号</span><input @focus="hideVK" v-model="tph" ref="tph"
+                    @keyup="tph=tph.toUpperCase()" @keyup.enter="checkTph" />
+            </div>
+            <div class="row"><span class="problem">解绑类型</span>
+                <select v-model="type">
+                    <option :value="0">单箱解绑</option>
+                    <option :value="1">解绑托盘上所有箱</option>
+                </select>
+            </div>
+            <div class="row" v-show="type==0"><span class="problem">箱号</span><input @focus="hideVK($event,1)"
+                    v-model="xh" ref="xh" @keyup="xh=xh.toUpperCase()" @keyup.enter="checkXh" />
+            </div>
+
+        </div>
+        <div class="btn_box" v-show="!hasHidden">
+            <button @click="sure">确认解绑</button>
+        </div>
+        <!-- 等待 -->
+        <div class="loading_bg" v-show="loading">
+            <div class="loading">
+                <p>{{loadingMsg}}<span> 。。。</span></p>
+            </div>
+        </div>
+        <!-- 说明文档 -->
+        <div class="page_bg" v-show="showHelp" @click="showHelp=false"></div>
+        <div class="page_box explain_box" v-show="showHelp">
+            <ul>
+                <li v-for="(list,i) in helpJson" :key="i">
+                    <h3 class="help_h3" v-if="list.isTitle" v-html="list.msg"></h3>
+                    <span class="help_span" v-if="!list.isTitle" v-html="list.msg"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../assets/vue.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#tpxjb',
+        data: {
+            bodyH: document.body.clientHeight,
+            loading: false,
+            loadingMsg: "请稍等",
+            hasHidden: false,
+            tph: "",
+            xh: "",
+            type: 0,
+            userName: "",
+            showHelp: false,
+            helpJson: null
+        },
+        async mounted() {
+            this.$refs.tph.focus();
+            this.userName = await getUserData();
+            this.helpJson = await getHelp("tpx/tpxjb.json");
+            window.onresize = () => { this.hasHidden = document.body.clientHeight < this.bodyH ? true : false };
+        },
+        methods: {
+            // 检查托盘号
+            checkTph() {
+                if (!this.tph) return;
+                this.loading = true;
+                let url = `${myConfig.api}tpx/tpxjb/checktp?storage=STORAGE_ZMC&user=${this.userName}&tpcode=${this.tph}`
+                axios.get(url).then((res) => {
+                    this.loading = false;
+                    if (res.data.errcode != 0) {
+                        alert(`托盘号：${this.tph}:${res.data.errmsg}`);
+                        this.tph = "";
+                        return;
+                    }
+                    this.hasCheckTph = true;
+                    this.$refs.xh.focus();
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 检查箱号
+            checkXh() {
+                if (!this.hasCheckTph) {
+                    alert('请先检查托盘号~');
+                    return;
+                }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/tpxjb/checkbox?storage=STORAGE_ZMC&user=${this.userName}&tpcode=${this.tph}&box=${this.xh}`
+                axios.get(url).then((res) => {
+                    this.loading = false;
+                    if (res.data.errcode != 0) {
+                        alert(`箱号${this.xh}:${res.data.errmsg}`);
+                        this.xh = "";
+                        return;
+                    }
+                    this.hasCheckXh = true;
+                    this.$refs.xh.blur();
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 确定解绑按钮,type=0时传入箱号，解绑箱,type=1时解绑托盘上所有箱号
+            sure() {
+                if (!this.hasCheckTph) {
+                    alert('请先检查托盘号~');
+                    return;
+                }
+                if (!this.hasCheckXh && this.type == 0) {
+                    alert('请先检查箱号~');
+                    return;
+                }
+                let r = confirm(`请确定是否解绑${this.type == 0 ? this.xh : "该托盘上所有箱"}`);
+                if (r == false) return;
+                this.loading = true;
+                let url = `${myConfig.api}tpx/tpxjb/done?storage=STORAGE_ZMC&user=${this.userName}&tpcode=${this.tph}&box=${this.xh}&type=${this.type}`
+                axios.get(url).then((res) => {
+                    this.loading = false;
+                    if (res.data.errcode != 0) {
+                        alert(res.data.errmsg);
+                        return;
+                    }
+                    this.loadingMsg = res.data.errmsg;
+                    this.loading = true;
+                    setTimeout(() => {
+                        this.reset();
+                    }, 1500);
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 重置
+            reset() {
+                this.loading = false;
+                this.loadingMsg = "请稍等";
+                this.hasHidden = false;
+                this.tph = "";
+                this.xh = "";
+                this.type = 0;
+                this.$refs.tph.focus();
+            },
+            hideVK(e, index) {
+                if (index) { setCursor(index) };
+                e.target.setAttribute('readonly', true);
+                setTimeout(() => {
+                    e.target.removeAttribute('readonly');
+                }, 100);
+            }
+        }
+    })
+</script>
+
+</html>

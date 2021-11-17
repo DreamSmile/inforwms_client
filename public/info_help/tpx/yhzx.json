@@ -1,0 +1,15 @@
+{
+    "name":"优化装箱",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"通过分理完成的货品，按整箱进行重新打包装箱"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>自库位</span>"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>货品</span>，自动显示该货品库存、包装量等信息"},
+        {"isTitle":false,"msg":"3、编辑<span class='pink_bg'>装箱量</span>(装箱量不允许超过当前库存)"},
+        {"isTitle":false,"msg":"4、扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"5、扫描<span class='pink_bg'>至库位</span>"},
+        {"isTitle":false,"msg":"6、验证成功后，界面自动清空，重复1-6步骤"}
+    ]
+}

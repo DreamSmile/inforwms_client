@@ -1,0 +1,18 @@
+{
+    "name":"托盘按箱收货",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"码盘后，通过RF在执行对唯一箱码收货的同时，完成托盘号与箱号的绑定"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>库位</span>"},
+        {"isTitle":false,"msg":"2、选择<span class='pink_bg'>托盘类</span>"},
+        {"isTitle":false,"msg":"3、扫描<span class='pink_bg'>托盘号</span>"},
+        {"isTitle":false,"msg":"4、扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"5、重复扫描<span class='pink_bg'>条码</span>，可点击<span class='green_bg'>扫RFID</span>按钮快速扫描条码.注：sku需要一致"},
+        {"isTitle":false,"msg":"6、当条码输入完成需要扫描下一个箱时，点击<span class='green_bg'>收箱</span>"},
+        {"isTitle":false,"msg":"7、可循环5-6步骤完成收货任务"},
+        {"isTitle":false,"msg":"8、检查数据后，点击<span class='green_bg'>确认收箱</span>按钮"},
+        {"isTitle":false,"msg":"9、收箱成功后，界面自动清空，重复1-9步骤"}
+    ]
+}

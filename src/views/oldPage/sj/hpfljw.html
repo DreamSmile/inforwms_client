@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title>货品返零捡位</title>
+    <link rel="stylesheet" type="text/css" href="../assets/reset.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .center_box {
+            height: 180px;
+            padding-top: 0px;
+        }
+
+        .center_box>div> {
+            height: calc(100% - 46px);
+            overflow: auto;
+        }
+
+        .center_box>div>h2 {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hpfljw" class="all" v-cloak>
+        <h1 @click="showHelp =true">货品返零捡位 [{{userName}}] <sup>?</sup></h1>
+        <div class="box flex_box">
+            <div class="row row_small">
+                <span class="problem three_em">自库位</span><input v-model="kw" @focus="hideVK" ref="kw"
+                    @keyup="kw=kw.toUpperCase()" @keyup.enter="checkMySite" class="input_small" />
+            </div>
+            <div class="row row_small" v-show="hasBox==0">
+                <span class="problem three_em">箱号</span>
+                <input v-model="xh" @focus="hideVK($event,1)" ref="xh" @keyup="xh=xh.toUpperCase()"
+                    @keyup.enter="checkBox" class="input_small" />
+            </div>
+            <div class="row row_small">
+                <span class="problem three_em">货号</span>
+                <input v-model="hp" @focus="hideVK($event,2)" ref="hp" class="two_inp input_small"
+                    @keyup="hp=hp.toUpperCase()" @keyup.enter="checkSkuEnter" />
+                <span class="problem three_em">至库位</span>
+                <input v-model="tokw" ref="tokw" @keyup="tokw=tokw.toUpperCase()" @keyup.enter="checkMoveEnter"
+                    class="two_inp input_small" @focus="hideVK" />
+            </div>
+            <div class="detail_page flex_deta">
+                <div class="base_info">
+                    <div class="info_item">
+                        <p>货主</p>
+                        <p>LILANZ</p>
+                    </div>
+                    <div class="line"></div>
+                    <div class="info_item">
+                        <p>扫描量</p>
+                        <p>{{skuList.length}}</p>
+                    </div>
+                </div>
+                <div class="tab_title page_tab_title" v-show="!hasHidden">
+                    <span style="width:3em">序号</span>
+                    <span style="width:calc(100% - 3em)">唯一码</span>
+                </div>
+                <div class="no_list page_no_list" v-show="skuList.length<1 && !hasHidden">扫描条码才有数据哦~</div>
+                <div class="table_content page_table_content" v-show="skuList.length>0 && !hasHidden">
+                    <div class="table_row" :style="{backgroundColor:i%2==0?'#FAFAFA':''}"
+                        v-for="(list,i) in reverseSkuList" :key="i">
+                        <span style="width:3em">{{skuList.length - i}}</span>
+                        <span style="width:calc(100% - 3em)" class="btn_span" @click="showSkuFun(i)">{{list.hp}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 展示货品列表的描述和至库位 -->
+            <div class="page_bg" v-show="showSku" @click="showSku=false"></div>
+            <div class="page_box center_box" v-show="showSku">
+                <p class="close" @click="showSku=false">×</p>
+                <div class="">
+                    <h2>推荐库位</h2>
+                    <p>{{skuInfo.tjkw}}</p>
+                    <h2>描述</h2>
+                    <p>{{skuInfo.hpms}}</p>
+                </div>
+            </div>
+            <div class="loading_bg" v-show="loading">
+                <div class="loading">
+                    <p>{{loadingMsg}}<span> 。。。</span></p>
+                </div>
+            </div>
+            <!-- 说明文档 -->
+            <div class="page_bg" v-show="showHelp" @click="showHelp=false"></div>
+            <div class="page_box explain_box" v-show="showHelp">
+                <ul>
+                    <li v-for="(list,i) in helpJson" :key="i">
+                        <h3 class="help_h3" v-if="list.isTitle" v-html="list.msg"></h3>
+                        <span class="help_span" v-if="!list.isTitle" v-html="list.msg"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../assets/vue.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#hpfljw',
+        data: {
+            kw: "",//自库位
+            xh: "",//箱号
+            hp: "",//货品
+            skuList: [],//sku列表扫描
+            sml: 0,//扫描量
+            tokw: "",//至库位
+            hasBox: 0,//是否展示箱号，根据检查自库位接口获得loseID参数决定1：不输入0：需要验证箱号
+            loading: false,
+            userName: "",
+            hasCheckKw: false,//是否检查过自库位
+            hasCheckXh: false,
+            loadingMsg: "请稍等",
+            showList: false,
+            showHelp: false,
+            helpJson: null,
+            hasHidden: false,
+            skuInfo: {},
+            showSku: false,
+        },
+        async mounted() {
+            this.userName = await getUserData();
+            this.helpJson = await getHelp("sj/hpfljw.json");
+            this.$refs.kw.focus();
+            window.onresize = () => { this.hasHidden = document.body.clientHeight < this.bodyH ? true : false };
+        },
+        computed: {
+            reverseSkuList() {
+                return this.skuList.reverse();
+            }
+        },
+        methods: {
+            // 点击表格中的sku,展示详情
+            showSkuFun(index) {
+                this.skuInfo = this.skuList[index];
+                this.showSku = true;
+            },
+            // 检查自库位
+            checkMySite() {
+                if (!this.kw) {
+                    alert('请输入完整自库位信息~');
+                    return;
+                }
+                this.loading = true;
+                let url = `${myConfig.api}sj/hpflj/checkkw?storage=STORAGE_ZMC&kw=${this.kw}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`自库位${this.kw}: ${res.data.errmsg}`);
+                            this.kw = "";
+                            return;
+                        }
+                        this.hasBox = res.data.data.LOSEID;//是否丢失id,1:不输入箱号，0：要输入
+                        this.hasCheckKw = true;
+                        this.sml = res.data.data.searchRecord.length;
+                        if (this.hasBox == 0) {
+                            this.$refs.xh.focus();
+                        } else {
+                            this.$refs.hp.focus();
+                        }
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 检查sku回车，根据hasBox判断是去哪个接口
+            checkSkuEnter() {
+                if (!this.hasCheckKw) { alert('请先检查自库位~'); return; }
+                if (!this.hasCheckXh && this.hasBox == 0) { alert('请先检查箱号~'); return; }
+                if (!this.kw || !this.hp) { alert('请检查自库位、货品SKU！'); return; }
+                if (!this.checkSKUList(this.hp)) {//判断出当前输入的码不是同一批
+                    return;
+                }
+                this.loading = true;
+                // 此处根据hasBox参数来决定接口Url是否有box参数1:不需要箱号，0：需要箱号
+                let url = "";
+                if (this.hasBox == 0) {//需要验证箱号,不丢失箱号
+                    url = `${myConfig.api}sj/hpflj/checksku2?storage=STORAGE_ZMC&kw=${this.kw}&sku=${this.hp}&box=${this.xh}&user=${this.userName}`;
+                } else if (this.hasBox == 1) {//丢失箱号
+                    url = `${myConfig.api}sj/hpflj/checksku?storage=STORAGE_ZMC&kw=${this.kw}&sku=${this.hp}&user=${this.userName}`;
+                } else {
+                    alert(`LOSEID为${this.hasBox}: 参数传递有误，请联系it人员`);
+                    return;
+                }
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`${this.hp}: ${res.data.errmsg}`);
+                            this.hp = "";
+                            return;
+                        }
+                        this.skuList.push({ hp: this.hp, tjkw: res.data.data.LOC, hpms: res.data.data.DESCR });
+                        this.sml++;
+                        this.hp = "";
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            //    至库位回车
+            checkMoveEnter() {
+                if (!this.hasCheckKw) {
+                    alert('请先检查自库位~');
+                    return;
+                }
+                if (!this.kw || !this.tokw) {
+                    alert('请检查自库位、至库位~');
+                    return;
+                }
+                if (this.hasBox == 0 && !this.xh) {
+                    alert('请检查箱号~');
+                    return;
+                }
+                this.loading = true;
+                // 此处根据hasBox参数来决定接口Url是否有box参数1:不需要箱号，0：需要箱号
+                let url = "";
+                if (this.hasBox == 0) {//需要验证箱号,不丢失箱号
+                    url = `${myConfig.api}sj/hpflj/checkdonekw2?storage=STORAGE_ZMC&ykw=${this.kw}&zkw=${this.tokw}&box=${this.xh}&user=${this.userName}`;
+                } else if (this.hasBox == 1) {//丢失箱号
+                    url = `${myConfig.api}sj/hpflj/checkdonekw?storage=STORAGE_ZMC&ykw=${this.kw}&zkw=${this.tokw}&user=${this.userName}`;
+                } else {
+                    alert(`LOSEID为${this.hasBox}: 参数传递有误，请联系it人员`);
+                    return;
+                }
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(res.data.errmsg);
+                            return;
+                        }
+                        this.loadingMsg = res.data.errmsg;
+                        this.loading = true;
+                        setTimeout(() => {
+                            this.reset();
+                        }, 1500);
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 不丢失ID检查箱  回车测试箱号
+            checkBox() {
+                if (!this.xh) {
+                    alert('请检查至箱号数据是否完整！');
+                    return;
+                }
+                if (!this.hasCheckKw) {
+                    alert('请先检查自库位');
+                    return;
+                }
+                this.loading = true;
+                let url = `${myConfig.api}sj/hpflj/checkbox?storage=STORAGE_ZMC&box=${this.xh}&kw=${this.kw}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(res.data.errmsg);
+                            this.xh = "";
+                            return;
+                        }
+                        this.hasCheckXh = true;
+                        this.$refs.hp.focus();
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 每个扫描的sku都要检查，后六位随便，前面要一致，不然要提醒用户
+            checkSKUList(sku) {
+                if (this.skuList.length > 0) {
+                    if (this.skuList.find((el, index) => { return el.hp == sku })) { alert("重复添加啦~"); this.hp = ""; return false }
+                    let skuListSku = this.skuList[0].hp.substring(0, this.skuList[0].hp.length - 6);
+                    if (skuListSku != sku.substring(0, sku.length - 6)) {
+                        alert(`货品${sku}：sku与其他sku不一致~`);
+                        this.hp = "";
+                        return false;
+                    }
+                }
+                return true;
+            },
+            // 清除界面上所有数据
+            reset() {
+                this.kw = "";
+                this.hp = "";
+                this.hpms = "";
+                this.tokw = "";
+                this.xh = "";
+                this.sml = 0;
+                this.skuList = [];
+                this.loadingMsg = "请稍等";
+                this.loading = false;
+                this.hasCheckKw = false;
+                this.$refs.kw.focus();
+            },
+            hideVK(e, index) {
+                if (index) { setCursor(index) };
+                e.target.setAttribute('readonly', true);
+                setTimeout(() => {
+                    e.target.removeAttribute('readonly');
+                }, 100);
+            }
+        }
+    })
+</script>
+
+</html>

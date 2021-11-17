@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title>多品分拨集货</title>
+    <link rel="stylesheet" type="text/css" href="../assets/reset.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dpfbjh" class="all" v-cloak>
+        <h1 @click="showHelp =true">多品分拨集货 [{{userName}}] <sup>?</sup></h1>
+        <div class="box">
+            <div class="row">
+                <span class="problem">货箱</span>
+                <input @focus="hideVK" v-model="hx" ref="hx" @keyup="hx=hx.toUpperCase()" @keyup.enter="checkHx" />
+            </div>
+            <div class="row">
+                <span class="problem">任务组</span>
+                <input @focus="hideVK($event,1)" v-model="rwz" ref="rwz" @keyup="rwz=rwz.toUpperCase()"
+                    @keyup.enter="checkRwz" />
+            </div>
+            <div class="row">
+                <span class="problem">集货位:荐</span>
+                <input class="no_inp" v-model="tjjhw" readonly />
+            </div>
+            <div class="row">
+                <span class="problem">集货位</span>
+                <input @focus="hideVK($sevent,3)" v-model="jhw" ref="jhw" @keyup="jhw=jhw.toUpperCase()"
+                    @keyup.enter="checkJhw" />
+            </div>
+        </div>
+        <!-- 按钮 -->
+        <div class="btn_box" v-show="!hasHidden">
+            <!-- <button class="reset_btn" @click="cancelXh">集货释放</button> -->
+            <button class="btn_green" @click="showOkHis=true">完成记录({{hisList.length}})</button>
+        </div>
+        <!-- 完成列表 -->
+        <div class="page_bg" v-show="showOkHis" @click.stop="showOkHis=false"></div>
+        <div class="page_box" v-show="showOkHis">
+            <div class="detail_table rw_list">
+                <div class="tab_title">
+                    <span style="width:3em">序号</span>
+                    <span style="width:calc(100% - 6em)">集货位</span>
+                    <span style="width:3em">箱数</span>
+                </div>
+                <div class="no_list" v-show="hisList.length<1">暂无完成的记录~</div>
+                <div class="rw_list_table table_content" v-show="hisList.length>0">
+                    <div class="table_row table_data" :style="{backgroundColor:i%2==0?'#FAFAFA':''}"
+                        v-for="(list,i) in hisList" :key="i">
+                        <span style="width:3em">{{i+1}}</span>
+                        <span style="width:calc(100% - 6em)">{{list.PARTFOCUSLOC}}</span>
+                        <span style="width:3em">{{list.NUM}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 加载页面 -->
+        <div class="loading_bg" v-show="loading">
+            <div class="loading">
+                <p>{{loadingMsg}}<span> 。。。</span></p>
+            </div>
+        </div>
+        <!-- 说明文档 -->
+        <div class="page_bg" v-show="showHelp" @click="showHelp=false"></div>
+        <div class="page_box explain_box" v-show="showHelp">
+            <ul>
+                <li v-for="(list,i) in helpJson" :key="i">
+                    <h3 class="help_h3" v-if="list.isTitle" v-html="list.msg"></h3>
+                    <span class="help_span" v-if="!list.isTitle" v-html="list.msg"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../assets/vue.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        el: "#dpfbjh",
+        data: {
+            loading: false,
+            loadingMsg: "请稍等",
+            userName: "",
+            bodyH: document.body.clientHeight,
+            hasHidden: false,
+            showHelp: false,
+            helpJson: null,
+            showOkHis: false,
+            hisList: [],//集货完成列表
+            hx: "",
+            rwz: "",
+            tjjhw: "",
+            jhw: "",
+            hasCheckHx: false
+        },
+        async mounted() {
+            this.userName = await getUserData();
+            this.helpJson = await getHelp("jh/dpfbjh.json");
+            this.$refs.hx.focus();
+            window.onresize = () => {
+                if (document.body.clientHeight < this.bodyH) { this.hasHidden = true; } else { this.hasHidden = false; }
+            };
+            this.getHisList();
+        },
+        methods: {
+            // 获得历史
+            getHisList() {
+                let url = `${myConfig.api}jh/dpfbjh/jhlist?storage=STORAGE_ZMC&user=${this.userName}`
+                axios.get(url).then((res) => {
+                    if (res.data.errcode != 0) {
+                        alert(res.data.errmsg);
+                        return;
+                    }
+                    this.hisList = res.data.data;
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 检查货箱
+            checkHx() {
+                this.loading = true;
+                let url = `${myConfig.api}jh/dpfbjh/checkbox?storage=STORAGE_ZMC&user=${this.userName}&box=${this.hx}`
+                axios.get(url).then((res) => {
+                    this.loading = false;
+                    if (res.data.errcode != 0) {
+                        alert(`货箱${this.hx}:${res.data.errmsg}`);
+                        this.hx = "";
+                        return;
+                    }
+                    this.hasCheckHx = true;
+                    this.$refs.rwz.focus();
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 检查任务组，并获得推荐集货位
+            checkRwz() {
+                if (!this.hasCheckHx) { alert("请先检查货箱~"); this.rwz = ""; return }
+                this.loading = true;
+                let url = `${myConfig.api}jh/dpfbjh/getjhw?storage=STORAGE_ZMC&user=${this.userName}&rwz=${this.rwz}`
+                axios.get(url).then((res) => {
+                    this.loading = false;
+                    if (res.data.errcode != 0) {
+                        alert(`任务组${this.rwz}:${res.data.errmsg}`);
+                        this.rwz = "";
+                        return;
+                    }
+                    this.tjjhw = res.data.data ? res.data.data.PARTFOCUSLOC : "无";
+                    this.$refs.jhw.focus();
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 检查集货位
+            checkJhw() {
+                if (!this.hasCheckHx) { alert("请先检查货箱~"); this.jhw = ""; retrun }
+                if (this.tjjhw != "无" && this.jhw != this.tjjhw) { alert("请按照推荐集货位输入对应数据~"); this.jhw = ""; retrun }
+                this.loading = true;
+                let url = `${myConfig.api}jh/dpfbjh/checkjhw?storage=STORAGE_ZMC&user=${this.userName}&jhw=${this.jhw}`
+                axios.get(url).then((res) => {
+                    if (res.data.errcode != 0) {
+                        this.loading = false;
+                        alert(`集货位${this.jhw}:${res.data.errmsg}`);
+                        this.jhw = "";
+                        return;
+                    }
+                    this.sure();
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 确定
+            sure() {
+                let url = `${myConfig.api}jh/dpfbjh/comfirm?storage=STORAGE_ZMC&user=${this.userName}&jhw=${this.jhw}&box=${this.hx}&rwz=${this.rwz}`
+                axios.get(url).then((res) => {
+                    if (res.data.errcode != 0) {
+                        this.loading = false;
+                        alert(res.data.errmsg);
+                        return;
+                    }
+                    this.loadingMsg = res.data.errmsg;
+                    setTimeout(() => {
+                        this.reset();
+                    }, 1500);
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            // 释放
+            cancelXh() {
+                if (!this.jhw) { alert("请填入完整的集货位，再执行取消~"); this.$refs.jhw.focus(); return }
+                this.loading = true;
+                let url = `${myConfig.api}jh/dpfbjhsf/cancel?storage=STORAGE_ZMC&user=${this.userName}&jhw=${this.jhw}`
+                axios.get(url).then((res) => {
+                    if (res.data.errcode != 0) {
+                        this.loading = false;
+                        alert(res.data.errmsg);
+                        return;
+                    }
+                }).catch((err) => {
+                    this.loading = false;
+                    alert(err);
+                })
+            },
+            reset() {
+                this.showOkHis = false;
+                this.hx = "";
+                this.rwz = "";
+                this.tjjhw = "";
+                this.jhw = "";
+                this.hasCheckHx = false;
+                this.loading = false;
+                this.loadingMsg = "请稍等";
+                this.$refs.hx.focus();
+                this.getHisList();
+            },
+            hideVK(e, index) {
+                if (index) { setCursor(index) };
+                e.target.setAttribute('readonly', true);
+                setTimeout(() => {
+                    e.target.removeAttribute('readonly');
+                }, 100);
+            }
+        }
+    })
+</script>
+
+</html>

@@ -1,0 +1,18 @@
+{
+    "name":"按单组车",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"用于B2B按箱拣选波次组车接力拣和B2C边拣边播波次组车拣货"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、输入<span class='pink_bg'>区域</span>获得任务列表"},
+        {"isTitle":false,"msg":"2、根据<span class='pink_bg'>箱数</span>，扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"3、当箱号扫描完成，界面提示可以开始组车，点击<span class='green_bg'>开始组车</span>进入第二个界面"},
+        {"isTitle":false,"msg":"4、根据<span class='pink_bg'>SKU</span>扫描货品，当<span class='pink_bg'>数量</span>(可手动维护)与表格中的<span class='pink_bg'>数量</span>相等，点击提交按钮"},
+        {"isTitle":false,"msg":"5、成功后，自动开始下一任务，直到任务全部完成，界面自动更新,重复1-5步骤"},
+        {"isTitle":true,"msg":"注意"},
+        {"isTitle":false,"msg":"1、如想退出本次拣货，请点击<span class='green_bg'>退出拣货</span>按钮，并选择原因，确认退出"},
+        {"isTitle":false,"msg":"2、当任务已到达第二界面，至箱号箱号更换，请点击<span class='green_bg'>换箱</span>按钮，输入新箱号，确认修改"},
+        {"isTitle":false,"msg":"3、可通过点击<span class='green_bg'>库存</span>按钮，查看库位库存列表"}
+    ]
+}

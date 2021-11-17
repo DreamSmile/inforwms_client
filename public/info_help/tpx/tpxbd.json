@@ -1,0 +1,15 @@
+{
+    "name":"托盘箱绑定",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"对仓库已存在库存的箱号与托盘号进行绑定。主要是实现托盘上货箱的批量转移的功能，主要用于上架、移动等作业"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>库位</span>"},
+        {"isTitle":false,"msg":"2、选择<span class='pink_bg'>托盘类型</span>"},
+        {"isTitle":false,"msg":"3、扫描<span class='pink_bg'>托盘号</span>，自动显示数量"},
+        {"isTitle":false,"msg":"4、根据<span class='pink_bg'>需扫量</span>，循环扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"5、确认数据无误后，点击<span class='pink_bg'>确认绑定</span>按钮"},
+        {"isTitle":false,"msg":"6、验证成功后，界面自动清空，重复1-6步骤"}
+    ]
+}

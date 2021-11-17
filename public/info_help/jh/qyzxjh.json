@@ -1,0 +1,18 @@
+{
+    "name":"区域整箱箱拣货",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"根据作业区域："},
+        {"isTitle":false,"msg":"1、获取区域下系统生成的平置整箱存储区分配给订单的整箱出库任务"},
+        {"isTitle":false,"msg":"2、完成整箱整箱出库拣货"},
+        {"isTitle":false,"msg":"3、并向WCS下传整箱输送线任务和拣货整箱的箱明细以及贴标信息"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、选择<span class='pink_bg'>排序</span>(默认升序)"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>区域</span>，获得任务列表，任务列表详情可点击<span class='green_bg'>任务详情</span>按钮查看"},
+        {"isTitle":false,"msg":"3、页面自动显示任务详情，根据自库位信息，扫描<span class='pink_bg'>至箱号</span>"},
+        {"isTitle":false,"msg":"4、确定至箱号后点击<span class='green_bg'>确认货箱</span>按钮"},
+        {"isTitle":false,"msg":"5、货箱盘点成功后，自动开始下一任务，界面更新数据,重复1-5步骤"},
+        {"isTitle":false,"msg":"6、注意：如想退出本次盘点，请点击<span class='green_bg'>取消拣货</span>按钮，并选择原因，确认退出"}
+    ]
+}

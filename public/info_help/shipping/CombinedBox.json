@@ -1,0 +1,12 @@
+{
+    "name":"并箱",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"扫描两个出库箱号，将两箱货品合并一箱"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>汇总箱</span>"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>拿出箱</span>"},
+        {"isTitle":false,"msg":"3、并箱成功后，界面自动清空,重复1-3步骤"}
+    ]
+}

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title>设备收货异常箱查询</title>
+    <link rel="stylesheet" type="text/css" href="../assets/reset.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sbshycxcx" class="all" v-cloak>
+        <h1 @click="showHelp =true">设备收货异常箱查询 [{{userName}}] <sup>?</sup></h1>
+        <div class="box">
+            <div class="search">
+                <span class="problem two_em">箱号:</span>
+                <input v-model="xh" placeholder="请扫描箱号，查询详情" @keyup.enter="selectXh" @focus="hideVK" ref="xh"
+                    @keyup="xh=xh.toUpperCase()" />
+                <button class="search_btn" @click="selectXh">查询</button>
+            </div>
+            <div class="detail_page" v-show="showPage">
+                <div class="base_info">
+                    <div class="info_item">
+                        <p>货主</p>
+                        <p>{{info.HZ || '未知'}}</p>
+                    </div>
+                    <div class="line"></div>
+                    <div class="info_item">
+                        <p>是否混箱</p>
+                        <p :class="{red_em:info.HX==1}">{{info.HX=="1"?'是':'否'}}</p>
+                    </div>
+                    <div class="line"></div>
+                    <div class="info_item">
+                        <p>预期收货量</p>
+                        <p>{{info.YJL || 0}}</p>
+                    </div>
+                    <div class="line"></div>
+                    <div class="info_item">
+                        <p>实际收获量</p>
+                        <p>{{info.SJL || 0}}</p>
+                    </div>
+                </div>
+                <div class="detail_row">
+                    <span>箱号</span>
+                    <span>{{showXh || '未知'}}</span>
+                </div>
+                <div class="detail_row">
+                    <span>ERP单据号</span>
+                    <span>{{info.ERPDJH || '未知'}}</span>
+                </div>
+                <div class="detail_row">
+                    <span>ERP单据类型</span>
+                    <span>{{info.DJLX || '未知'}}</span>
+                </div>
+                <div class="detail_row">
+                    <span>ASN单号</span>
+                    <span>{{info.ASNDH || '未知'}}</span>
+                </div>
+                <div class="detail_row">
+                    <span>收货状态</span>
+                    <span :class="{red_em:info.ZT==0}">{{info.ZT==0?'失败':'成功'}}</span>
+                </div>
+                <div class="detail_row">
+                    <span>详情</span>
+                    <span :class="{red_em:info.ZT==0}">{{info.MSG || '未知'}}</span>
+                </div>
+            </div>
+        </div>
+        <!-- 加载页面 -->
+        <div class="loading_bg" v-show="loading">
+            <div class="loading">
+                <p>请稍等<span> 。。。</span></p>
+            </div>
+        </div>
+        <!-- 说明文档 -->
+        <div class="page_bg" v-show="showHelp" @click="showHelp=false"></div>
+        <div class="page_box explain_box" v-show="showHelp">
+            <ul>
+                <li v-for="(list,i) in helpJson" :key="i">
+                    <h3 class="help_h3" v-if="list.isTitle" v-html="list.msg"></h3>
+                    <span class="help_span" v-if="!list.isTitle" v-html="list.msg"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../assets/vue.js"></script>
+<script src="../assets/axios.min.js"></script>
+<script src="../assets/common.js"></script>
+<script>
+    var app = new Vue({
+        el: '#sbshycxcx',
+        data: {
+            loading: false,
+            xh: "",
+            showXh: "",//当显示查询信息时，输入框箱号清空，信息处显示箱号
+            showPage: false,
+            userName: "",
+            info: {},//错误的所有信息
+            showHelp: false,
+            helpJson: null
+        },
+        async mounted() {
+            this.$refs.xh.focus();
+            this.userName = await getUserData();
+            this.helpJson = await getHelp("sh/sbshycxcx.json");
+        },
+        methods: {
+            hideVK(e) {
+                e.target.setAttribute('readonly', true);
+                setTimeout(() => {
+                    e.target.removeAttribute('readonly');
+                }, 100);
+            },
+            // 根据箱号查找详细信息
+            selectXh() {
+                if (!this.xh) {
+                    alert('请输入完整箱号~');
+                    return;
+                }
+                this.loading = true;
+                let url = `${myConfig.api}sh/ycxxx/boxinfo?storage=STORAGE_ZMC&box=${this.xh}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`箱号${this.xh}: ${res.data.errmsg}`);
+                            this.xh = "";
+                            this.info = {};
+                            this.showPage = false;
+                            return;
+                        }
+                        console.log(res.data);
+                        this.info = res.data.data;
+                        this.showPage = true;
+                        this.showXh = this.xh;
+                        this.xh = '';
+                        this.$refs.xh.focus();
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            getUrl(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null)
+                    return unescape(r[2])
+                else
+                    return "";
+            },
+            // 获得用户名称
+            getUserData() {
+                let url = `${myConfig.userApi}?action=getDqkhidByToken&token=${this.getUrl("apptoken")}`;
+                axios.get(url).then((res) => {
+                    this.loading = false;
+                    if (!res.data.data.khmc) {
+                        alert(res.data.data);
+                        return;
+                    }
+                    this.userName = res.data.data.cname;
+                    if (!this.userName) {
+                        alert('登录人员名称获取失败，请联系it人员')
+                    }
+                }).catch((error) => {
+                    this.loading = false;
+                    alert(error);
+                    return false;
+                });
+            }
+        }
+    })
+</script>
+
+</html>

@@ -1,0 +1,21 @@
+{
+    "name":"注册箱拣货",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"用于阁楼零拣：零拣任务、按单注册箱拣货任务"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>区域</span>，获得箱数"},
+        {"isTitle":false,"msg":"2、第一次扫描<span class='pink_bg'>箱号</span>，获得组车号与任务号"},
+        {"isTitle":false,"msg":"3、循环扫描<span class='pink_bg'>箱号</span>直到数量与界面上箱数一致"},
+        {"isTitle":false,"msg":"4、检查数据后点击<span class='green_bg'>开始组车</span>按钮"},
+        {"isTitle":false,"msg":"5、跳入拣货页面，根据<span class='pink_bg'>SKU</span>扫描<span class='pink_bg'>货品</span>"},
+        {"isTitle":false,"msg":"6、可点击<span class='pink_bg'>数量</span>，增加拣货的数量，但不得超过最大数量"},
+        {"isTitle":false,"msg":"7、检查数据正确后点击<span class='green_bg'>提交</span>按钮"},
+        {"isTitle":false,"msg":"8、成功后，自动开始下一任务，界面更新数据,重复1-8步骤"},
+        {"isTitle":true,"msg":"注意事项"},
+        {"isTitle":false,"msg":"1、检查区域并扫描箱号后，可通过点击<span class='green_bg'>清空组车记录</span>按钮，解绑箱子"},
+        {"isTitle":false,"msg":"2、拣货界面，可通过点击<span class='green_bg'>格号</span>查看当前任务的详细数据，点击<span class='green_bg'>任务数</span>查看任务列表，点击<span class='green_bg'>已扫量</span>查看扫描过的箱号列表"},
+        {"isTitle":false,"msg":"3、如想退出本次盘点，请点击<span class='green_bg'>退出盘点</span>按钮，并选择原因，确认退出"}
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "name":"提升机输送托盘任务生成",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"通过向WCS下达提升机托盘输送任务，由WCS根据任务指令控制提升机将托盘输送至托盘上主货品默认上架区设定的提升机出口"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>库位</span>"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>托盘号</span>，页面自动显示<span class='pink_bg'>出口</span>"},
+        {"isTitle":false,"msg":"3、页面数据核对后，点击<span class='green_bg'>确认下发任务</span>"},
+        {"isTitle":false,"msg":"4、成功后界面自动清空，重复1-3步骤"}
+    ]
+}

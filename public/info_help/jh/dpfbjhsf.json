@@ -1,0 +1,14 @@
+{
+    "name":"多品分拨集货释放",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"将集货位释放"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>集货位</span>，获得箱数"},
+        {"isTitle":false,"msg":"2、确认数据无误后，点击<span class='green_bg'>确定释放</span>按钮"},
+        {"isTitle":false,"msg":"3、成功后，界面自动清空，重复1-3步骤"},
+        {"isTitle":true,"msg":"注意事项"},
+        {"isTitle":false,"msg":"1、可通过点击列表中的数据，自动生成需要释放的数据"}
+    ]
+}

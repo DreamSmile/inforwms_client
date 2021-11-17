@@ -1,0 +1,14 @@
+{
+    "name":"托盘箱解绑",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"将已与托盘绑定的箱号解除绑定关系"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>托盘号</span>"},
+        {"isTitle":false,"msg":"2、选择<span class='pink_bg'>解绑类型</span>"},
+        {"isTitle":false,"msg":"3、当<span class='pink_bg'>解绑类型</span>为单箱解绑，需要扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"4、点击<span class='green_bg'>确认解绑</span>按钮"},
+        {"isTitle":false,"msg":"5、验证成功后，界面自动清空，重复1-5步骤"}
+    ]
+}

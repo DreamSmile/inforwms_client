@@ -1,0 +1,15 @@
+{
+    "name":"多品分拨集货",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"根据任务将货箱集中到集货位"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>货箱</span>"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>任务组</span>，获得推荐集货位"},
+        {"isTitle":false,"msg":"3、扫描<span class='pink_bg'>集货位</span>"},
+        {"isTitle":false,"msg":"4、验证成功后，界面自动清空，重复1-4步骤"},
+        {"isTitle":true,"msg":"注意事项"},
+        {"isTitle":false,"msg":"1、可通过点击<span class='green_bg'>清空组车记录</span>按钮，查看历史完成记录"}
+    ]
+}

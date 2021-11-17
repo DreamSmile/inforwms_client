@@ -1,0 +1,11 @@
+{
+    "name":"设备收货异常箱查询",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"查询收货异常箱异常原因"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"2、界面将会显示该箱号出错的具体原因"}
+    ]
+}

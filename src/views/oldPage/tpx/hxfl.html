@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title>货箱分理</title>
+    <link rel="stylesheet" type="text/css" href="../assets/reset.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .table_row {
+            align-items: center;
+        }
+
+        .page_table_content,
+        .page_no_list {
+            height: calc(100% - 35px);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hxfl" class="all" v-cloak>
+        <h1 @click="showHelp =true">货箱分理 [{{userName}}] <sup>?</sup></h1>
+        <div class="box flex_box">
+            <div class="row row_small"><span class="problem three_em">自库位</span><input @focus="hideVK" v-model="zkw"
+                    class="two_inp" ref="zkw" @keyup="zkw=zkw.toUpperCase()" @keyup.enter="checkZkw" />
+                <span class="problem three_em">自箱号</span><input @focus="hideVK($event,1)" v-model="zxh" ref="zxh"
+                    class="two_inp" @keyup="zxh=zxh.toUpperCase()" @keyup.enter="checkZxh" />
+            </div>
+            <div class="row row_small"><span class="problem three_em">至库位</span><input @focus="hideVK($event,2)"
+                    v-model="tokw" class="two_inp" ref="tokw" @keyup="tokw=tokw.toUpperCase()"
+                    @keyup.enter="checkTokw" />
+                <span class="problem three_em">至箱号</span><input @focus="hideVK($event,3)" v-model="toxh" class="two_inp"
+                    ref="toxh" @keyup="toxh=toxh.toUpperCase()" @keyup.enter="checkToxh" />
+            </div>
+            <div class="row row_small"><span class="problem three_em">至箱型</span>
+                <select v-model="toxx" :disabled="skuList.length>0" @change="changeSel" class="two_inp two_select">
+                    <option :value="10">整箱</option>
+                    <option :value="20">混箱</option>
+                </select>
+                <span class="problem three_em">货品</span><input @focus="hideVK($event,4)" v-model="hp" class="two_inp"
+                    ref="hp" @keyup="hp=hp.toUpperCase()" @keyup.enter="checkHp" />
+            </div>
+            <div class="detail_page">
+                <div class="tab_title page_tab_title">
+                    <span style="width:2.5em">序号</span>
+                    <span :style="{width:toxx==10?'calc(100% - 9.5em)':'calc(100% - 2.5em)'}">唯一码</span>
+                    <span style="width:4em" v-show="toxx==10">装箱量</span>
+                    <span style="width:3em" v-show="toxx==10">数量</span>
+                    <!-- <span style="width:4em">操作</span> -->
+                </div>
+                <div class="no_list page_no_list" v-show="skuList.length<1 && !hasHidden">
+                    扫描条码才有数据哦~</div>
+                <div class="table_content page_table_content" v-show="skuList.length>0 && !hasHidden">
+                    <div class="table_row" :style="{backgroundColor:i%2==0?'#FAFAFA':''}"
+                        v-for="(list,i) in reverseSkuList" :key="i">
+                        <span style="width:2.5em">{{skuList.length - i}}</span>
+                        <span :style="{width:toxx==10?'calc(100% - 9.5em)':'calc(100% - 2.5em)'}">{{list.name}}</span>
+                        <span style="width:4em" v-if="toxx==10">{{list.zxl}}</span>
+                        <span style="width:3em" v-if="toxx==10">{{list.num}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn_box" v-show="!hasHidden">
+                <button @click="sure">提交</button>
+            </div>
+        </div>
+        <!-- 等待 -->
+        <div class="loading_bg" v-show="loading">
+            <div class="loading">
+                <p>{{loadingMsg}}<span> 。。。</span></p>
+            </div>
+        </div>
+        <!-- 说明文档 -->
+        <div class="page_bg" v-show="showHelp" @click="showHelp=false"></div>
+        <div class="page_box explain_box" v-show="showHelp">
+            <ul>
+                <li v-for="(list,i) in helpJson" :key="i">
+                    <h3 class="help_h3" v-if="list.isTitle" v-html="list.msg"></h3>
+                    <span class="help_span" v-if="!list.isTitle" v-html="list.msg"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../assets/vue.js"></script>
+<script src="../assets/common.js"></script>
+<script src="../assets/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#hxfl',
+        data: {
+            bodyH: document.body.clientHeight,
+            loading: false,
+            loadingMsg: "请稍等",
+            userName: "",
+            zkw: "",
+            zxh: "",
+            toxh: "",
+            tokw: "",
+            toxx: 10,
+            hp: "",
+            hasHidden: false,//是否展示表格，当软键盘弹出
+            info: {},
+            skuList: [],
+            hasCheckZkw: true,
+            hasCheckZxh: false,
+            hasCheckTokw: false,
+            hasCheckToXh: false,
+            showHelp: false,
+            helpJson: null
+        },
+        async mounted() {
+            this.userName = await getUserData();
+            this.$refs.zkw.focus();
+            this.helpJson = await getHelp("tpx/hxfl.json");
+            window.onresize = () => { this.hasHidden = document.body.clientHeight < this.bodyH ? true : false };
+        },
+        computed: {
+            reverseSkuList: function () {
+                return this.skuList.reverse();
+            }
+        },
+        methods: {
+            // 去除某货号列表
+            remove_code(index) {
+                this.reverseSkuList.splice(index, 1);
+            },
+            // 检查自库位
+            checkZkw() {
+                if (!this.zkw) {
+                    alert('请输入完整自库位~');
+                    return;
+                }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/hxfl/checkkw?storage=STORAGE_ZMC&kw=${this.zkw}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`自库位${this.zkw}: ${res.data.errmsg}`);
+                            this.zkw = "";
+                            return;
+                        }
+                        this.$refs.zxh.focus();
+                        this.hasCheckZkw = true;
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 检查自箱号
+            checkZxh() {
+                if (!this.hasCheckZkw) { alert("请先检查自库位~"); this.zxh = ""; return }
+                if (!this.zkw) { alert('请输入完整自箱号~'); return; }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/hxfl/checkbox?storage=STORAGE_ZMC&kw=${this.zkw}&box=${this.zxh}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`自箱号${this.zxh}: ${res.data.errmsg}`);
+                            this.zxh = "";
+                            return;
+                        }
+                        this.$refs.tokw.focus();
+                        this.hasCheckZxh = true;
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 检查至库位
+            checkTokw() {
+                if (!this.hasCheckZkw || !this.hasCheckZxh) { alert("请先检查自库位、至箱号~"); this.tokw = ""; return }
+                if (!this.tokw) { alert('请输入完整自库位~'); return; }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/hxfl/checkkw2?storage=STORAGE_ZMC&kw=${this.tokw}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`至库位${this.tokw}: ${res.data.errmsg}`);
+                            this.tokw = "";
+                            return;
+                        }
+                        this.$refs.toxh.focus();
+                        this.hasCheckTokw = true;
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 检查至箱号
+            checkToxh() {
+                if (!this.hasCheckZkw || !this.hasCheckZxh) { alert("请先检查自库位、至箱号~"); this.toxh = ""; return }
+                if (!this.tokw) { alert('请输入完整自库位~'); return; }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/hxfl/checkkw2?storage=STORAGE_ZMC&kw=${this.tokw}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`至箱号${this.toxh}: ${res.data.errmsg}`);
+                            this.toxh = "";
+                            return;
+                        }
+                        this.$refs.hp.focus();
+                        this.hasCheckToXh = true;
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 更换箱型
+            changeSel() {
+                this.$refs.hp.focus();
+            },
+            // 货品检查，循环
+            checkHp() {
+                if (!this.hasCheckZkw || !this.hasCheckZxh || !this.hasCheckTokw || !this.hasCheckToXh) { alert("请按步骤检查前部分所有信息~"); this.hp = ""; return }
+                if (!this.hp) { alert('请输入完整货品~'); return; }
+                // 在整箱模式下，sku需要一致
+                if (this.skuList.length > 0) {
+                    if (this.toxx == 10) {
+                        if (this.skuList.find((el, index) => { return el.name == this.hp })) { alert("重复添加啦~"); this.hp = ""; return }
+                    }
+                    let skuListSku = this.skuList[0].name.substring(0, this.skuList[0].name.length - 6);
+                    console.log(skuListSku);
+                    if (skuListSku != this.hp.substring(0, this.hp.length - 6) && this.toxx == 10) {
+                        alert(`整箱模式下，货品${this.hp}：sku与其他sku不一致~`);
+                        this.hp = "";
+                        return;
+                    }
+                }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/hxfl/checksku?storage=STORAGE_ZMC&kw=${this.zkw}&zkw=${this.tokw}&box=${this.zxh}&zbox=${this.toxh}&sku=${this.hp}&boxtype=${this.toxx}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.data.errcode != 0) {
+                            alert(`货品${this.hp}: ${res.data.errmsg}`);
+                            this.hp = "";
+                            return;
+                        }
+                        let info = {};
+                        if (this.toxx == 10) {
+                            info = { name: this.hp, num: res.data.data.NUM, zxl: res.data.data.QTY }
+                        } else {
+                            info = { name: this.hp }
+                        }
+                        this.skuList.push(info);
+                        this.$refs.hp.focus();
+                        this.hasCheckXh = true;
+                        this.hp = "";
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            // 确定
+            sure() {
+                if (!this.hasCheckZkw || !this.hasCheckZxh || !this.hasCheckTokw || !this.hasCheckToXh) { alert("请按流程步骤使用~"); return }
+                this.loading = true;
+                let url = `${myConfig.api}tpx/hxfl/done?storage=STORAGE_ZMC&kw=${this.zkw}&zkw=${this.tokw}&box=${this.zxh}&zbox=${this.toxh}&user=${this.userName}`;
+                axios.get(url)
+                    .then((res) => {
+                        if (res.data.errcode != 0) {
+                            this.loading = false;
+                            alert(res.data.errmsg);
+                            return;
+                        }
+                        this.loadingMsg = res.data.errmsg;
+                        setTimeout(() => {
+                            this.reset();
+                        }, 1500);
+                    })
+                    .catch((error) => {
+                        this.loading = false;
+                        alert(error);
+                    });
+            },
+            reset() {
+                this.zkw = "";
+                this.zxh = "";
+                this.toxh = "";
+                this.tokw = "";
+                this.toxx = 10;
+                this.hp = "";
+                this.hasHidden = false;//是否展示表格，当软键盘弹出
+                this.info = {};
+                this.skuList = [];
+                this.hasCheckZkw = true;
+                this.hasCheckZxh = false;
+                this.hasCheckTokw = false;
+                this.hasCheckToXh = false;
+                this.loading = false;
+                this.loadingMsg = "请稍等";
+                this.$refs.zkw.focus();
+            },
+            hideVK(e, index) {
+                if (index) { setCursor(index) };
+                e.target.setAttribute('readonly', true);
+                setTimeout(() => {
+                    e.target.removeAttribute('readonly');
+                }, 100);
+            }
+        }
+    })
+</script>
+
+</html>

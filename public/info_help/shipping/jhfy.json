@@ -1,0 +1,16 @@
+{
+    "name":"集货发运",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"扫描托盘号、箱号，进行集货"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>发运号</span>，获得<span class='pink_bg'>承运商</span>、需扫量信息"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>托盘号</span>"},
+        {"isTitle":false,"msg":"3、根据需扫量，循环扫描<span class='pink_bg'>箱号</span>"},
+        {"isTitle":false,"msg":"4、扫描<span class='pink_bg'>箱号</span>，检查数据无误后，点击<span class='green_bg'>确认箱号</span>按钮"},
+        {"isTitle":false,"msg":"5、验证成功后，页面自动开始下一任务，知道任务完成，界面自动清空，重复1-5步骤"},
+        {"isTitle":true,"msg":"注意事项"},
+        {"isTitle":false,"msg":"1、可通过点击<span class='green_bg'>发运号列表</span>按钮，自动检查发运号，并获得数据"}
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "name":"货品返零捡位",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"系统按照扫描货品在货品主档中设置的唯一零拣位，推荐上架库位"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、扫描<span class='pink_bg'>至库位</span>，页面根据自至库位出现箱号输入框"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>箱号</span>(如果有出现该输入框)"},
+        {"isTitle":false,"msg":"3、重复扫描<span class='pink_bg'>货号</span>"},
+        {"isTitle":false,"msg":"4、每扫描一次货号，会出现对应的货品描述及对应推荐库位，扫描量+1"},
+        {"isTitle":false,"msg":"5、可点击<span class='green_bg'>货号</span>，查看扫描的货物列表"},
+        {"isTitle":false,"msg":"6、输入<span class='pink_bg'>至库位</span>"},
+        {"isTitle":false,"msg":"7、以上步骤成功后，界面自动清空，重复1-7步骤"}
+    ]
+}

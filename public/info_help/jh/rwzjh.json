@@ -1,0 +1,21 @@
+{
+    "name":"任务组拣货",
+    "errcode":0,
+    "data":[
+        {"isTitle":true,"msg":"需求"},
+        {"isTitle":false,"msg":"根据作业区域，用于平置区整箱拣货"},
+        {"isTitle":true,"msg":"操作步骤"},
+        {"isTitle":false,"msg":"1、选择<span class='pink_bg'>任务类型</span>(默认全部)"},
+        {"isTitle":false,"msg":"2、扫描<span class='pink_bg'>区域</span>后，点击<span class='green_bg'>开始拣货</span>按钮，或者点击表格中的列表数据"},
+        {"isTitle":false,"msg":"3、进入拣货界面"},
+        {"isTitle":false,"msg":"4、扫描<span class='pink_bg'>容器号</span>"},
+        {"isTitle":false,"msg":"5、根据<span class='pink_bg'>SKU</span>扫描<span class='pink_bg'>货品</span>"},
+        {"isTitle":false,"msg":"6、可点击<span class='pink_bg'>数量</span>，增加拣货的数量"},
+        {"isTitle":false,"msg":"7、检查数据正确后点击<span class='green_bg'>提交</span>按钮"},
+        {"isTitle":false,"msg":"8、成功后，自动开始下一任务，界面更新数据,重复1-8步骤"},
+        {"isTitle":true,"msg":"注意事项"},
+        {"isTitle":false,"msg":"1、拣货完成后，发现箱子已被占用，请点击<span class='green_bg'>换箱</span>按钮，换容器号"},
+        {"isTitle":false,"msg":"2、可点击<span class='green_bg'>汇总</span>按钮，查看该区域的拣货汇总信息"},
+        {"isTitle":false,"msg":"3、如想退出本次盘点，请点击<span class='green_bg'>退出盘点</span>按钮，并选择原因，确认退出"}
+    ]
+}
