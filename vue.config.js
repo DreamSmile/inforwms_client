@@ -2,6 +2,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
     productionSourceMap: false,
+    chainWebpack: config => {
+        config.plugins.delete("prefetch")//只加载当前页面需要的js
+    },
     devServer: {
         disableHostCheck: true,
         host: '0.0.0.0',

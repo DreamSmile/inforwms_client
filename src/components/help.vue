@@ -20,19 +20,12 @@ export default {
       show: false,
     };
   },
-  props: {
-    info: {
-      type: Object,
-      default: {},
-    },
-    
-  },
   mounted() {
     this.getHelp();
   },
   methods: {
     getHelp() {
-      this.helpJson = getHelpAxios(this.info.url)
+      this.helpJson = getHelpAxios(this.$route.meta.url)
         .then((res) => {
           this.helpJson = res.data;
         })

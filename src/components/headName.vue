@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1 @click="showHelpFun">{{info.name}} [{{$store.state.userName}}] <sup>?</sup></h1>
+    <h1 @click="showHelpFun">{{$route.meta.title}} [{{userName}}] <sup>?</sup></h1>
     <!-- 帮助文档 -->
-    <help :info="info" ref="help"></help>
+    <help ref="help"></help>
   </div>
 </template>
 <script>
@@ -13,13 +13,8 @@ export default {
   data() {
     return {
       showHelp: false,
+      userName: JSON.parse(localStorage.getItem("IM_USER_INFO")).cname,
     };
-  },
-  props: {
-    info: {
-      type: Object,
-      default: {},
-    },
   },
   methods: {
     showHelpFun() {

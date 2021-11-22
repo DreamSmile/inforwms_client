@@ -1,6 +1,6 @@
 <template>
   <div class="all">
-    <head-name :info="info"></head-name>
+    <head-name></head-name>
     <div class="box">
       <div class="inp_box">
         <div class="row">
@@ -11,6 +11,12 @@
           <span class="three_em">拿出箱</span>
           <input @focus="hideVK($event,1)" v-model="xh2" ref="xh2" @keyup="xh2=xh2.toUpperCase()" @keyup.enter="checkXh2" />
         </div>
+      </div>
+    </div>
+    <!-- 等待 -->
+    <div class="loading_bg" v-show="loading">
+      <div class="loading">
+        <p>{{loadingMsg}}<span> 。。。</span></p>
       </div>
     </div>
   </div>
@@ -24,10 +30,9 @@ export default {
       xh1: "",
       xh2: "",
       hasCheckXh1: false,
-      info: { name: "并箱", url: "shipping/CombinedBox" },
     };
   },
-  async mounted() {
+  mounted() {
     this.$refs.xh1.focus();
   },
   methods: {
@@ -38,14 +43,8 @@ export default {
         return;
       }
       this.loading = true;
-      let url = `${apiUrl}fy/bx/checkbox1?storage=STORAGE_ZMC&user=${this.userName}&box=${this.xh1}`;
-      //  test
-      this.hasCheckXh1 = true;
-      this.$refs.xh2.focus();
-      this.loading = false;
-      return;
-      // test over
-      axios
+      let url = `${this.$apiUrl}fy/bx/checkbox1?storage=STORAGE_ZMC&box=${this.xh1}`;
+      this.axios
         .get(url)
         .then((res) => {
           this.loading = false;
@@ -75,15 +74,9 @@ export default {
         return;
       }
       this.loading = true;
-      let url = `${apiUrl}fy/bx/checkbox2?storage=STORAGE_ZMC&user=${this.userName}&box=${this.xh1}&box2=${this.xh2}`;
-      // test
-      this.loadingMsg = res.data.errmsg;
-      setTimeout(() => {
-        this.reset();
-      }, 1500);
-      return;
-      // test over
-      axios
+      let url = `${this.$apiUrl}fy/bx/checkbox2?storage=STORAGE_ZMC&box=${this.xh1}&box2=${this.xh2}`;
+      console.log(url);
+      this.axios
         .get(url)
         .then((res) => {
           if (res.data.errcode != 0) {
@@ -113,7 +106,7 @@ export default {
     },
     hideVK(e, index) {
       if (index) {
-        setCursor(index);
+        this.setCursor(index);
       }
       e.target.setAttribute("readonly", true);
       setTimeout(() => {

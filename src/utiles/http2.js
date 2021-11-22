@@ -1,5 +1,4 @@
 import axios from 'axios';
-import $store from '../store'
 const axiosIns = axios.create({
     timeout: 15 * 1000,
     headers: {
@@ -75,7 +74,7 @@ export function $get(url, params, config = {}) {
         config.params = params;
     }
     if (url.indexOf('rfidapi') == -1 && url.indexOf('userApi') == -1 && url.indexOf('json') == -1) {//是获取用户信息的接口不需要传入user`
-        url = `${url}&user=${$store.state.userInfo.cname}`
+        url = `${url}&user=${JSON.parse(localStorage.getItem('USER_INFO')).cname}`
     }
     return axiosIns.get(url, config).then(res => {
         if (res.status == 200)
